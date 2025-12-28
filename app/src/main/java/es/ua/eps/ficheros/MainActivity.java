@@ -6,6 +6,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,14 +17,9 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String FILE_NAME = "texto.txt";
 
-    // Constantes de ubicación
-    private static final int INTERNO = 0;
-    private static final int EXTERNO = 1;
-
-    private int ubicacionActual = INTERNO;
-
     private EditText etTexto;
     private Button btnMoverExterno, btnMoverInterno;
+    private Button btnGuardar, btnVerContenido, btnEstado, btnCerrar;
 
     private File internalFile;
     private File externalFile;
@@ -33,70 +29,79 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // EditText y botones
         etTexto = findViewById(R.id.etTexto);
         btnMoverExterno = findViewById(R.id.btnMoverExterno);
         btnMoverInterno = findViewById(R.id.btnMoverInterno);
+        btnGuardar = findViewById(R.id.btnGuardar);
+        btnVerContenido = findViewById(R.id.btnVerContenido);
+        btnEstado = findViewById(R.id.btnEstado);
+        btnCerrar = findViewById(R.id.btnCerrar);
 
+        // Archivos internos y externos
         internalFile = new File(getFilesDir(), FILE_NAME);
         externalFile = new File(getExternalFilesDir(null), FILE_NAME);
 
-        // Detectar ubicación inicial
-        if (externalFile.exists()) {
-            ubicacionActual = EXTERNO;
-        }
-
+        // Inicializa botones según ubicación de fichero
         updateButtons();
 
-        findViewById(R.id.btnGuardar).setOnClickListener(v -> guardarTexto());
+        // Guardar texto
+        btnGuardar.setOnClickListener(v -> guardarTexto());
 
-        findViewById(R.id.btnVerContenido).setOnClickListener(v ->
+        // Ver contenido en nueva Activity
+        btnVerContenido.setOnClickListener(v ->
                 startActivity(new Intent(this, FileContentActivity.class)));
 
-        findViewById(R.id.btnEstado).setOnClickListener(v ->
+        // Estado memoria externa
+        btnEstado.setOnClickListener(v ->
                 startActivity(new Intent(this, ExternalStateActivity.class)));
 
-        // 👉 DESTINO
+        // Mover a memoria externa
         btnMoverExterno.setOnClickListener(v -> {
-            ubicacionActual = EXTERNO;
-            updateButtons();
+            if (internalFile.exists()) {
+                moveFile(internalFile, externalFile);
+                updateButtons();
+            }
         });
 
+        // Mover a almacenamiento interno
         btnMoverInterno.setOnClickListener(v -> {
-            ubicacionActual = INTERNO;
-            updateButtons();
+            if (externalFile.exists()) {
+                moveFile(externalFile, internalFile);
+                updateButtons();
+            }
         });
 
-        findViewById(R.id.btnCerrar).setOnClickListener(v -> finish());
+        // Cerrar aplicación
+        btnCerrar.setOnClickListener(v -> finishAffinity());
     }
 
     private void guardarTexto() {
-        String texto = etTexto.getText().toString();
+        String texto = etTexto.getText().toString().trim();
         if (texto.isEmpty()) return;
 
-        File destino = (ubicacionActual == EXTERNO) ? externalFile : internalFile;
-        File origen  = (ubicacionActual == EXTERNO) ? internalFile : externalFile;
+        File destino = getCurrentFile();
 
-        try {
-            // Mover el fichero si está en la otra ubicación
-            if (origen.exists()) {
-                copyFile(origen, destino);
-                origen.delete();
-            }
-
-            // Guardar texto
-            try (FileOutputStream fos = new FileOutputStream(destino, true)) {
-                fos.write((texto + "\n").getBytes());
-            }
-
+        try (FileOutputStream fos = new FileOutputStream(destino, true)) {
+            fos.write((texto + "\n").getBytes());
             etTexto.setText("");
-            updateButtons();
-
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        updateButtons();
     }
 
-    private void copyFile(File origen, File destino) throws IOException {
+    private File getCurrentFile() {
+        if (externalFile.exists()) return externalFile;
+        return internalFile;
+    }
+
+    private void moveFile(File origen, File destino) {
         try (FileInputStream in = new FileInputStream(origen);
              FileOutputStream out = new FileOutputStream(destino)) {
 
@@ -105,11 +110,21 @@ public class MainActivity extends AppCompatActivity {
             while ((len = in.read(buffer)) > 0) {
                 out.write(buffer, 0, len);
             }
+            origen.delete();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     private void updateButtons() {
-        btnMoverExterno.setEnabled(ubicacionActual == INTERNO);
-        btnMoverInterno.setEnabled(ubicacionActual == EXTERNO);
+        btnMoverExterno.setEnabled(internalFile.exists());
+        btnMoverInterno.setEnabled(externalFile.exists());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateButtons();
     }
 }

@@ -32,6 +32,7 @@ public class FileContentActivity extends AppCompatActivity {
 
     private String readFile(File file) {
         StringBuilder sb = new StringBuilder();
+        if (!file.exists()) return "El fichero está vacío";
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;

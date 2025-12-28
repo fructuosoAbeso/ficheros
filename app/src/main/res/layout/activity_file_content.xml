@@ -1,47 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <!-- NAVBAR -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <!-- TextView para mostrar el contenido -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:title="Contenido del fichero"
-        app:titleTextColor="@android:color/white" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#EEEEEE">
 
-    <!-- CONTENIDO CON PADDING -->
-    <LinearLayout
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <!-- TEXTO SCROLLEABLE -->
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/tvContenido"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp" />
-        </ScrollView>
-
-        <!-- BOTÓN VOLVER -->
-        <Button
-            android:id="@+id/btnVolver"
+        <TextView
+            android:id="@+id/tvContenido"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Volver"
-            android:onClick="volver" />
+            android:textSize="16sp"
+            android:padding="8dp" />
+    </ScrollView>
 
-    </LinearLayout>
+    <!-- Botón Volver -->
+    <Button
+        android:id="@+id/btnVolver"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Volver"
+        android:layout_marginTop="8dp"
+        android:onClick="volver" />
 
 </LinearLayout>

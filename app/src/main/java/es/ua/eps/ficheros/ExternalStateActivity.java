@@ -19,16 +19,12 @@ public class ExternalStateActivity extends AppCompatActivity {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append("MEDIA_MOUNTED: ")
-                .append(Environment.MEDIA_MOUNTED.equals(state)).append("\n");
-        sb.append("MEDIA_MOUNTED_READ_ONLY: ")
-                .append(Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)).append("\n");
-        sb.append("MEDIA_REMOVED: ")
-                .append(Environment.MEDIA_REMOVED.equals(state)).append("\n");
-        sb.append("MEDIA_SHARED: ")
-                .append(Environment.MEDIA_SHARED.equals(state)).append("\n");
-        sb.append("MEDIA_UNMOUNTED: ")
-                .append(Environment.MEDIA_UNMOUNTED.equals(state)).append("\n");
+        sb.append("Estado actual: ").append(state).append("\n\n");
+        sb.append("MEDIA_MOUNTED: ").append(Environment.MEDIA_MOUNTED.equals(state)).append("\n");
+        sb.append("MEDIA_MOUNTED_READ_ONLY: ").append(Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)).append("\n");
+        sb.append("MEDIA_REMOVED: ").append(Environment.MEDIA_REMOVED.equals(state)).append("\n");
+        sb.append("MEDIA_SHARED: ").append(Environment.MEDIA_SHARED.equals(state)).append("\n");
+        sb.append("MEDIA_UNMOUNTED: ").append(Environment.MEDIA_UNMOUNTED.equals(state)).append("\n");
 
         tvEstado.setText(sb.toString());
     }
